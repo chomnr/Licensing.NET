@@ -82,9 +82,11 @@ namespace Licensing_System.Controllers
             return Ok(new JsonResult(test));
         }
 
+        /*
             private bool LicenseExists(int id)
         {
             return (_context.Licenses?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+        */
     }
 }
