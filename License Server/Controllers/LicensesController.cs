@@ -31,10 +31,6 @@ namespace Licensing_System.Controllers
             _provider = new LicenseProvider(processor);
         }
 
-        /// <summary>
-        /// todo add comment.
-        /// </summary>
-        /// <returns></returns>
         [HttpPost("generate")]
         public async Task<IActionResult> PostGenerateLicense()
         {

@@ -43,7 +43,7 @@ namespace Licensing_System.Services.Licensing
     /// <summary>
     /// Handles the authorities for anything related to CreateLicense.
     /// </summary>
-    public class CreateLicenseAuthorityBuilder : LicenseAuthority
+   /* public class CreateLicenseAuthorityBuilder : LicenseAuthority
     {
         private LicenseStruct _license = new LicenseStruct();
 
@@ -63,7 +63,7 @@ namespace Licensing_System.Services.Licensing
         {
             return await Task.FromResult(_license);
         }
-    }
+    }*/
 
     /// <summary>
     /// Handles the authorities for anything related to ValidateLicense.

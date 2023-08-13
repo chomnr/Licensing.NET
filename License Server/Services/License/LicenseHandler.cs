@@ -48,6 +48,7 @@ namespace Licensing_Server.Services.Licensing
         /// <returns></returns> 
         public async Task<LicenseStruct> CreateLicenseEvent(License license)
         {
+            /*
             CreateLicenseAuthorityBuilder authorityBuilder = new CreateLicenseAuthorityBuilder(license);
             var result = await authorityBuilder
                 .CheckFormat()
@@ -56,10 +57,13 @@ namespace Licensing_Server.Services.Licensing
             if (result.Value.Status == AUTHORITY_STATUS.APPROVED) {
                 Processor.AddLicense(license);
             }
-
-            return result.Value;
+            */
+            // Disabled Authority for CreateLicense; until I found what rules I can add
+            // and to avoid confliction with Stripe.
+            return new LicenseStruct(license, AUTHORITY_STATUS.APPROVED);
         }
 
+        ///
         public async Task<LicenseStruct> ValidateLicenseEvent(UserSession session, string productId)
         {
             ValidateLicenseAuthorityBuilder authorityBuilder = new(Processor, session, productId);
@@ -69,7 +73,7 @@ namespace Licensing_Server.Services.Licensing
                 .Auto();
             if (result.Value.Status != AUTHORITY_STATUS.APPROVED)
             {
-                //If AuthorityStatus anything but approved that means something is wrong the license.
+                // If AuthorityStatus is anything but approved that means something is wrong with the license.
                 // expired, the current status etc;
                 Processor.SaveLicense(result.Value.License);
             }
