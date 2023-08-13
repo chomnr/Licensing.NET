@@ -19,12 +19,11 @@ namespace License_Server.Services.Licensing
     public class LicenseProvider : ILicenseProvider
     {
         private readonly LicenseHandler handler;
-        private readonly ILicenseProcessor processor;
 
         public LicenseProvider(ILicenseProcessor processor)
         {
             this.handler = new LicenseHandler(processor);
-            this.processor = processor;
+            //this.processor = processor;
         }
 
         /// <summary>
