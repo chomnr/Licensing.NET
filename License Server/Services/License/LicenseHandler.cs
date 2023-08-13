@@ -60,6 +60,7 @@ namespace Licensing_Server.Services.Licensing
             */
             // Disabled Authority for CreateLicense; until I found what rules I can add
             // and to avoid confliction with Stripe.
+            Processor.AddLicense(license);
             return new LicenseStruct(license, AUTHORITY_STATUS.APPROVED);
         }
 
