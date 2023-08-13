@@ -9,11 +9,11 @@ namespace License_Server.Services.Licensing
     public interface ILicenseProvider
     {
         // Create License
-        public LicenseStruct CreateLicense(LicenseGen lgen);
-        public LicenseStruct CreateLicense(string owner, string productId);
+        public Task<LicenseStruct> CreateLicense(LicenseGen lgen);
+        public Task<LicenseStruct> CreateLicense(string owner, string productId);
 
         // Validate License
-        public LicenseStruct ValidateLicense(UserSession session, string productId);
+        public Task<LicenseStruct> ValidateLicense(UserSession session, string productId);
     }
 
     public class LicenseProvider : ILicenseProvider
@@ -31,10 +31,10 @@ namespace License_Server.Services.Licensing
         /// not specified.
         /// </summary>
         /// <param name="lgen"></param>
-        public LicenseStruct CreateLicense(LicenseGen lgen)
+        public async Task<LicenseStruct> CreateLicense(LicenseGen lgen)
         {
             handler.OnLicenseCreate += new LicenseDelegation.LicenseCreate(handler.CreateLicenseEvent);
-            return handler.CreateLicenseEvent(lgen.Build()).Result;
+            return await handler.CreateLicenseEvent(lgen.Build());
         }
 
         /// <summary>
@@ -42,13 +42,13 @@ namespace License_Server.Services.Licensing
         /// </summary>
         /// <param name="buyerId"></param>
         /// <param name="productId"></param>
-        public LicenseStruct CreateLicense(string buyerId, string productId) 
+        public async Task<LicenseStruct> CreateLicense(string buyerId, string productId) 
         {
             handler.OnLicenseCreate += new LicenseDelegation.LicenseCreate(handler.CreateLicenseEvent);
-            return handler.CreateLicenseEvent(new LicenseGen()
+            return await handler.CreateLicenseEvent(new LicenseGen()
                 .SetOwner(buyerId)
                 .SetProduct(productId)
-                .Build()).Result;
+                .Build());
         }
 
         /// <summary>
@@ -57,12 +57,12 @@ namespace License_Server.Services.Licensing
         /// <param name="session"></param>
         /// <param name="productId"></param>
         /// <returns></returns>
-        public LicenseStruct ValidateLicense(UserSession session, string productId)
+        public async Task<LicenseStruct> ValidateLicense(UserSession session, string productId)
         {
             // Use LicensesController to interpret the data. and then store the results
             // inside new UserSession(id, name(nullable))
             handler.OnLicenseValidate += new LicenseDelegation.LicenseValidate(handler.ValidateLicenseEvent);
-            return handler.ValidateLicenseEvent(session, productId).Result;
+            return await handler.ValidateLicenseEvent(session, productId);
         }
     }
 }

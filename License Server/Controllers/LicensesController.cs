@@ -51,7 +51,7 @@ namespace Licensing_System.Controllers
                     // Payment Intent Succeeded Event
                     if (@event.Type == Events.PaymentIntentSucceeded)
                     {
-                        _provider.CreateLicense(Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
+                        await _provider.CreateLicense(Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
                         await _context.SaveChangesAsync();
                     }
                 }
@@ -73,7 +73,7 @@ namespace Licensing_System.Controllers
         {
             //todo: for YOU; get session token(id), then get id of user.
             UserSession session = new UserSession(sessionId);
-            LicenseStruct result = _provider.ValidateLicense(session, productId);
+            LicenseStruct result = await _provider.ValidateLicense(session, productId);
             return Ok(Json(result).Value);
         }
     }
