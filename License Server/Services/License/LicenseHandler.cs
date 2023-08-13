@@ -67,16 +67,23 @@ namespace Licensing_Server.Services.Licensing
                 .CheckStatus()
                 .CheckExpiration()
                 .Auto();
+            if (result.Value.Status != AUTHORITY_STATUS.APPROVED)
+            {
+                //If AuthorityStatus anything but approved that means something is wrong the license.
+                // expired, the current status etc;
+                Processor.SaveLicense(result.Value.License);
+            }
             return result.Value;
-            //.SetProcessor(processor)
-            // do authority checks.
-            //return License.LICENSE_STATUS.ACTIVATED;
-            //authority, check if license has not expired, 
-            // check if a transaciton exists
-
-            //get session id -> get id of user -> get product id. Find if the user has
-            // a product of Id and check if it's expired, check if novice was paid etc;
-            // need a custom method that can be
         }
     }
 }
+
+//.SetProcessor(processor)
+// do authority checks.
+//return License.LICENSE_STATUS.ACTIVATED;
+//authority, check if license has not expired, 
+// check if a transaciton exists
+
+//get session id -> get id of user -> get product id. Find if the user has
+// a product of Id and check if it's expired, check if novice was paid etc;
+// need a custom method that can be

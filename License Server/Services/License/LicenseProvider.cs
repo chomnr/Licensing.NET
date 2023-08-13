@@ -14,6 +14,8 @@ namespace License_Server.Services.Licensing
 
         // Validate License
         public Task<LicenseStruct> ValidateLicense(UserSession session, string productId);
+
+        //ActivateLicense
     }
 
     public class LicenseProvider : ILicenseProvider

@@ -96,18 +96,41 @@ namespace Licensing_System.Services.Licensing
 
         public ValidateLicenseAuthorityBuilder CheckExpiration()
         {
+            if ( _license.License != null )
+            {
+                long currentTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                long expiration = _license.License.PurchaseDate + _license.License.Duration;
+
+                if (currentTime > expiration)
+                {
+                    _license.License.Status = License.LICENSE_STATUS.DEACTIVATED;
+                    _license.Status = AUTHORITY_STATUS.DENIED;
+                }
+            }
             return this;
         }
 
         public ValidateLicenseAuthorityBuilder CheckStatus()
         {
+            if (_license.License != null)
+            {
+                if (_license.License.Status != License.LICENSE_STATUS.ACTIVATED )
+                {
+                    _license.Status = AUTHORITY_STATUS.DENIED;
+                    return this;
+                }
+            }
             return this;
         }
 
-        //checknovice?
-
         public async override Task<ActionResult<LicenseStruct>> Auto()
         {
+            // If the AuthorityStatus is still pending at this point
+            // that means all the checks worked.
+            if (_license.Status == AUTHORITY_STATUS.PENDING)
+            {
+                _license.Status = AUTHORITY_STATUS.APPROVED;
+            }
             return await Task.FromResult(_license);
         }
     }

@@ -74,6 +74,13 @@ namespace Licensing_System.Controllers
             //todo: for YOU; get session token(id), then get id of user.
             UserSession session = new UserSession(sessionId);
             LicenseStruct result = await _provider.ValidateLicense(session, productId);
+            if (result.License != null)
+            {
+                if (result.Status != AUTHORITY_STATUS.APPROVED)
+                {
+                    await _context.SaveChangesAsync();
+                }
+            }
             return Ok(Json(result).Value);
         }
     }
