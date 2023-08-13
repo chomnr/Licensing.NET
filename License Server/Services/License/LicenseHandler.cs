@@ -54,7 +54,7 @@ namespace Licensing_Server.Services.Licensing
                 .Approve();
 
             if (result.Value.Status == AUTHORITY_STATUS.APPROVED) {
-                Processor.Add(license);
+                Processor.AddLicense(license);
             }
 
             return result.Value;

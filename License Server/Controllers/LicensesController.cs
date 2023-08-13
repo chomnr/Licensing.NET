@@ -33,7 +33,7 @@ namespace Licensing_System.Controllers
         }
         
         /// <summary>
-        /// 
+        /// todo add comment.
         /// </summary>
         /// <returns></returns>
         [HttpPost("generate")]
@@ -69,16 +69,16 @@ namespace Licensing_System.Controllers
         [HttpGet("verify")]
         public async Task<IActionResult> GetValidateLicense(string sessionId, string productId)
         {
-            //get cookie or get results from cache or database.
-            // get id
-            // put user id inside UserSession(USER_ID)
+            //todo: for YOU; get session token(id), then get id of user.
             UserSession session = new UserSession(sessionId);
             LicenseStruct test = _provider.ValidateLicense(session, productId);
 
+            /*
             if (test.Status == LicenseAuthorityUtil.AUTHORITY_STATUS.PENDING)
             {
                 return Ok(new JsonResult("status: failed"));
             }
+           */
             return Ok(new JsonResult(test));
         }
 

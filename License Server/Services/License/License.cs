@@ -18,7 +18,7 @@ namespace License_Server.Services.LicenseService
         public string? Owner { get; set; }
         public string Key { get; set; }
         public long PurchaseDate { get; set; } = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-        public long Duration { get; set; } = 2592000000; // default duration is 30 days for a license.
+        public long Duration { get; set; } = 2592000000; // default duration for license 30 days.
         public LICENSE_STATUS Status { get; set; } = LICENSE_STATUS.ACTIVATED;
         public string KeyFormat { get; set; } = "XXXXX-XXXXX-XXXXX-XXXXX";
     }
@@ -225,7 +225,7 @@ namespace License_Server.Services.LicenseService
         public License Build()
         {
             // Make sure we do not set a purchase date for an unclaimed LICENSE.
-            if (this.License.Status != LICENSE_STATUS.UNCLAIMED)
+            if (this.License.Status == LICENSE_STATUS.UNCLAIMED)
             {
                 this.License.PurchaseDate = 0;
             }

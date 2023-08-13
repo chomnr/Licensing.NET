@@ -6,7 +6,7 @@ namespace Licensing_Server.Services.Licensing
 {
     public interface ILicenseProcessor
     {
-        public void Add(License license);
+        public void AddLicense(License license);
         public License? FindLicense(UserSession session, string productId);
     }
 
@@ -18,7 +18,7 @@ namespace Licensing_Server.Services.Licensing
             _context = context;
         }
 
-        public void Add(License license)
+        public void AddLicense(License license)
         {
             _context.Licenses.Add(license);
         }
