@@ -3,9 +3,8 @@ using License_Server.Services.User;
 using Licensing_Server.Services.Licensing;
 using Licensing_System.Services.Licensing;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Stripe;
-using System.ComponentModel;
+using static Licensing_System.Services.Licensing.LicenseAuthorityUtil;
 using LicenseProvider = License_Server.Services.Licensing.LicenseProvider;
 
 namespace Licensing_System.Controllers
@@ -16,7 +15,7 @@ namespace Licensing_System.Controllers
 
     [Route("api/license")]
     [ApiController]
-    public class LicensesController : ControllerBase
+    public class LicensesController : Controller
     {
         private readonly LicenseDbContext _context;
         private readonly ILicenseProcessor _processor;
@@ -31,7 +30,7 @@ namespace Licensing_System.Controllers
             _processor = processor;
             _provider = new LicenseProvider(processor);
         }
-        
+
         /// <summary>
         /// todo add comment.
         /// </summary>
@@ -47,7 +46,8 @@ namespace Licensing_System.Controllers
                 var headers = Request.Headers["Stripe-Signature"];
                 var @event = EventUtility.ConstructEvent(json, headers, secret);
 
-                if (@event != null) {
+                if (@event != null)
+                {
                     // Payment Intent Succeeded Event
                     if (@event.Type == Events.PaymentIntentSucceeded)
                     {
@@ -56,11 +56,13 @@ namespace Licensing_System.Controllers
                     }
                 }
                 return Ok();
-            } catch (StripeException)
+            }
+            catch (StripeException)
             {
                 // Exception does not catch StripeException for some reason.
                 return Challenge();
-            } catch (Exception ex2)
+            }
+            catch (Exception ex2)
             {
                 return BadRequest(ex2);
             }
@@ -71,22 +73,8 @@ namespace Licensing_System.Controllers
         {
             //todo: for YOU; get session token(id), then get id of user.
             UserSession session = new UserSession(sessionId);
-            LicenseStruct test = _provider.ValidateLicense(session, productId);
-
-            /*
-            if (test.Status == LicenseAuthorityUtil.AUTHORITY_STATUS.PENDING)
-            {
-                return Ok(new JsonResult("status: failed"));
-            }
-           */
-            return Ok(new JsonResult(test));
+            LicenseStruct result = _provider.ValidateLicense(session, productId);
+            return Ok(Json(result).Value);
         }
-
-        /*
-            private bool LicenseExists(int id)
-        {
-            return (_context.Licenses?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
-        */
     }
 }
