@@ -94,6 +94,7 @@ namespace Licensing_Server.Services.Licensing
         /// <returns></returns>
         public async Task<LicenseResult> LicenseActivateEvent(string key)
         {
+
             /*
             ActivateLicenseAuthorityBuilder authorityBuilder = new(Processor, key);
             var result = await authorityBuilder
