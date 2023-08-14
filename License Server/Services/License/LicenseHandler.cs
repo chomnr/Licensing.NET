@@ -2,6 +2,7 @@
 using License_Server.Services.Licensing;
 using License_Server.Services.Licensing.Rules;
 using License_Server.Services.User;
+using Stripe;
 using System.Diagnostics;
 using static License_Server.Services.Licensing.License;
 //client -> mediator(does authenticatin) -> license server. 
@@ -87,13 +88,20 @@ namespace Licensing_Server.Services.Licensing
         }
 
         /// <summary>
-        /// LicenseActivateEvent.
+        /// LicenseActivateEvent. (Admin Command)
         /// </summary>
         /// <param name="session"></param>
         /// <param name="key"></param>
         /// <returns></returns>
         public async Task<LicenseResult> LicenseActivateEvent(string key)
         {
+            LicenseLookUp lookUp = new LicenseLookUp(null, null, key);
+            LICENSE_STATUS[] statusToLookFor = new LICENSE_STATUS[] { LICENSE_STATUS.SUSPENDED, LICENSE_STATUS.UNCLAIMED };
+            IAuthorityRule[] rules = { new RequireStatusRole(statusToLookFor), new RequireOwnershipRule(), new RequireDurationRule() };
+            LicenseResult result = await Authority
+                .SetErrorMessage("Activation has failed either because the license does not exist, is deactivated, is currently activated, or the duration is set to 0.")
+                .AddRules(rules)
+                .RunOn(lookUp);
 
             /*
             ActivateLicenseAuthorityBuilder authorityBuilder = new(Processor, key);
@@ -109,7 +117,7 @@ namespace Licensing_Server.Services.Licensing
             }
             */
             //return result.Value;
-            throw new NotImplementedException();
+            return result;
         }
     }
 }
