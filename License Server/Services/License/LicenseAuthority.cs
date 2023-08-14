@@ -48,11 +48,12 @@ namespace License_Server.Services.Licensing
             for (int i = 0; i < Rules.Count; i++ )
             {
                 Result = Rules[i].Execute(license);
+                /* not query optimized it will run multiple queries instead of just one.
                 if (Result.AuthorityState == AUTHORITY_STATE.REJECTED)
                 {
                     // Immediately stop running the rules when a rejection occurs.
                     break;
-                }
+                }*/
             }
             return await Task.FromResult(Result);
         }
