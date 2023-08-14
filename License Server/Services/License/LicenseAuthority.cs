@@ -4,11 +4,16 @@ using License_Server.Services.Licensing.Rules;
 using Licensing_Server.Services.Licensing;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 
 namespace License_Server.Services.Licensing
 {
-    public enum AUTHORITY_STATE { APPROVED, PENDING, REJECTED }
+    public enum AUTHORITY_STATE {
+        APPROVED,
+        PENDING,
+        REJECTED 
+    }
 
     public interface ILicenseAuthority {
         LicenseAuthority AddRules(IAuthorityRule[] rules);
