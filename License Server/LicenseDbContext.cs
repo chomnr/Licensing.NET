@@ -1,7 +1,9 @@
 ﻿using License_Server.Services.Licensing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using static License_Server.Services.Licensing.License;
 
-namespace Licensing_System
+namespace License_Server
 {
     public class LicenseDbContext : DbContext
     {
@@ -21,6 +23,14 @@ namespace Licensing_System
             {
                 optionsBuilder.UseSqlServer(_configuration.GetConnectionString("MicrosoftSQL"));
             }
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // Convert ENUM to STRING
+            modelBuilder.Entity<License>()
+                .Property(d => d.Status)
+                .HasConversion(new EnumToStringConverter<LICENSE_STATUS>());
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

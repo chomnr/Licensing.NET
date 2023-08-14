@@ -21,7 +21,7 @@ namespace License_Server.Migrations
                     Key = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PurchaseDate = table.Column<long>(type: "bigint", nullable: false),
                     Duration = table.Column<long>(type: "bigint", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     KeyFormat = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>

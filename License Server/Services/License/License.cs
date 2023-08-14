@@ -5,6 +5,23 @@ using static License_Server.Services.Licensing.License;
 
 namespace License_Server.Services.Licensing
 {
+    /// <summary>
+    /// Look up licenses depending on the values.
+    /// </summary>
+    public class LicenseLookUp
+    {
+        public string? ProductId { get; set; } = "0";
+        public string? Owner { get; set; }
+        public string? Key { get; set; }
+
+        public LicenseLookUp(string? productId, string? owner, string? Key)
+        {
+            this.ProductId = productId;
+            this.Owner = owner;
+            this.Key = Key;
+        }
+    }
+
     public class License
     {
         // ACTIVATED = PAYING

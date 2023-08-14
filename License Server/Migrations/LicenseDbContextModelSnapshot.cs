@@ -21,7 +21,7 @@ namespace License_Server.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("License_Server.Services.LicenseService.License", b =>
+            modelBuilder.Entity("License_Server.Services.Licensing.License", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -50,8 +50,9 @@ namespace License_Server.Migrations
                     b.Property<long>("PurchaseDate")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

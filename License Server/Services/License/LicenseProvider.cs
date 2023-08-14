@@ -7,23 +7,26 @@ namespace License_Server.Services.Licensing
     public interface ILicenseProvider
     {
         // Create License
-        public Task<LicenseStruct> CreateLicense(LicenseGen lgen);
-        public Task<LicenseStruct> CreateLicense(string owner, string productId);
+        public Task<LicenseResult> CreateLicense(LicenseGen lgen);
+        public Task<LicenseResult> CreateLicense(string owner, string productId);
 
         // Validate License
-        public Task<LicenseStruct> ValidateLicense(UserSession session, string productId);
+        public Task<LicenseResult> ValidateLicense(UserSession session, string productId);
 
         //ActivateLicense
-        public Task<LicenseStruct> ActivateLicense(UserSession session, string key);
+        public Task<LicenseResult> ActivateLicense(string key);
     }
 
     public class LicenseProvider : ILicenseProvider
     {
-        private readonly LicenseHandler handler;
+        private readonly LicenseHandler Handler;
 
+        private LicenseAuthority Authority;
+        
         public LicenseProvider(ILicenseProcessor processor)
         {
-            this.handler = new LicenseHandler(processor);
+            this.Handler = new LicenseHandler(processor);
+            this.Authority = new LicenseAuthority(processor);
             //this.processor = processor;
         }
 
@@ -33,10 +36,10 @@ namespace License_Server.Services.Licensing
         /// <param name="session"></param>
         /// <param name="key"></param>
         /// <returns></returns>
-        public async Task<LicenseStruct> ActivateLicense(UserSession session, string key)
+        public async Task<LicenseResult> ActivateLicense(string key)
         {
-            handler.OnLicenseActivate += new LicenseDelegation.LicenseActivate(handler.LicenseActivateEvent);
-            return await handler.LicenseActivateEvent(session, key);
+            Handler.OnLicenseActivate += new LicenseDelegation.LicenseActivate(Handler.LicenseActivateEvent);
+            return await Handler.LicenseActivateEvent(key);
         }
 
         /// <summary>
@@ -44,10 +47,10 @@ namespace License_Server.Services.Licensing
         /// not specified.
         /// </summary>
         /// <param name="lgen"></param>
-        public async Task<LicenseStruct> CreateLicense(LicenseGen lgen)
+        public async Task<LicenseResult> CreateLicense(LicenseGen lgen)
         {
-            handler.OnLicenseCreate += new LicenseDelegation.LicenseCreate(handler.CreateLicenseEvent);
-            return await handler.CreateLicenseEvent(lgen.Build());
+            Handler.OnLicenseCreate += new LicenseDelegation.LicenseCreate(Handler.CreateLicenseEvent);
+            return await Handler.CreateLicenseEvent(lgen.Build());
         }
 
         /// <summary>
@@ -55,10 +58,10 @@ namespace License_Server.Services.Licensing
         /// </summary>
         /// <param name="buyerId"></param>
         /// <param name="productId"></param>
-        public async Task<LicenseStruct> CreateLicense(string buyerId, string productId) 
+        public async Task<LicenseResult> CreateLicense(string buyerId, string productId) 
         {
-            handler.OnLicenseCreate += new LicenseDelegation.LicenseCreate(handler.CreateLicenseEvent);
-            return await handler.CreateLicenseEvent(new LicenseGen()
+            Handler.OnLicenseCreate += new LicenseDelegation.LicenseCreate(Handler.CreateLicenseEvent);
+            return await Handler.CreateLicenseEvent(new LicenseGen()
                 .SetOwner(buyerId)
                 .SetProduct(productId)
                 .Build());
@@ -70,12 +73,20 @@ namespace License_Server.Services.Licensing
         /// <param name="session"></param>
         /// <param name="productId"></param>
         /// <returns></returns>
-        public async Task<LicenseStruct> ValidateLicense(UserSession session, string productId)
+        public async Task<LicenseResult> ValidateLicense(UserSession session, string productId)
         {
             // Use LicensesController to interpret the data. and then store the results
             // inside new UserSession(id, name(nullable))
-            handler.OnLicenseValidate += new LicenseDelegation.LicenseValidate(handler.ValidateLicenseEvent);
-            return await handler.ValidateLicenseEvent(session, productId);
+            /*
+            authority.AddRules({
+                    NO_EXPIRY, 
+                    NO_PURCHASEDATE, 
+                    RULE_3, 
+                    RULE_4, 
+                    RULE_5})*/
+
+            Handler.OnLicenseValidate += new LicenseDelegation.LicenseValidate(Handler.ValidateLicenseEvent);
+            return await Handler.ValidateLicenseEvent(session, productId);
         }
     }
 }

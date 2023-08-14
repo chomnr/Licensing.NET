@@ -1,9 +1,9 @@
-﻿using License_Server.Services.Licensing;
+﻿using License_Server;
+using License_Server.Services.Licensing;
 using License_Server.Services.User;
 using Licensing_Server.Services.Licensing;
 using Microsoft.AspNetCore.Mvc;
 using Stripe;
-using static License_Server.Services.Licensing.LicenseAuthorityUtil;
 using LicenseProvider = License_Server.Services.Licensing.LicenseProvider;
 
 namespace Licensing_System.Controllers
@@ -27,8 +27,18 @@ namespace Licensing_System.Controllers
         {
             _context = context;
             _processor = processor;
-            _provider = new LicenseProvider(processor);
+            _provider = new LicenseProvider(_processor);
         }
+
+        /*
+        [HttpPost("/api/admin/license/activate")]
+        public async Task<IActionResult> PostActivateLicense(string key)
+        {
+            // Handle cookie/ permissions here or mask it around a different endpoint.
+            LicenseStruct result = await _provider.ActivateLicense(key);
+            await _context.SaveChangesAsync();
+            return Ok(result.AuthorityStatus.ToString());
+        }*/
 
         [HttpPost("generate")]
         public async Task<IActionResult> PostGenerateLicense()
@@ -68,10 +78,10 @@ namespace Licensing_System.Controllers
         {
             //todo: for YOU; get session token(id), then get id of user.
             UserSession session = new UserSession(sessionId);
-            LicenseStruct result = await _provider.ValidateLicense(session, productId);
+            LicenseResult result = await _provider.ValidateLicense(session, productId);
             if (result.License != null)
             {
-                if (result.Status != AUTHORITY_STATUS.APPROVED)
+                if (result.AuthorityState != AUTHORITY_STATE.APPROVED)
                 {
                     await _context.SaveChangesAsync();
                 }
@@ -80,3 +90,32 @@ namespace Licensing_System.Controllers
         }
     }
 }
+
+
+/*
+ 
+
+       [HttpPost("activate")]
+        public async Task<IActionResult> PostActivateLicense(string key)
+        {
+            // Handle cookie/ permissions here or mask it around a different endpoint.
+            var result = await _provider.ActivateLicense(key);
+            await _context.SaveChangesAsync();
+            return Ok(result.Status.ToString());
+        }
+
+        [HttpPost("deactivate")]
+        public async Task<IActionResult> PostDeactivateLicense(string sessionId, string? target, string key)
+        {
+            // Handle cookie/ permissions here or mask it around a different endpoint.
+            throw new NotImplementedException();
+        }
+
+        [HttpPost("suspend")]
+        public async Task<IActionResult> PostSuspendLicense(string sessionId, string? target, string key)
+        {
+            // Handle cookie/ permissions here or mask it around a different endpoint.
+            throw new NotImplementedException();
+        }
+    }
+ */

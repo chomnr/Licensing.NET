@@ -1,88 +1,60 @@
-﻿using License_Server.Services.Licensing.Authorities;
+﻿using License_Server.Services.License;
+using License_Server.Services.Licensing;
+using License_Server.Services.Licensing.Rules;
+using Licensing_Server.Services.Licensing;
 using Microsoft.AspNetCore.Mvc;
-using static License_Server.Services.Licensing.License;
-using static License_Server.Services.Licensing.LicenseAuthorityUtil;
+using System.Collections;
+using System.Runtime.Serialization;
 
 namespace License_Server.Services.Licensing
 {
-    public struct LicenseStruct
-    {
-        public AUTHORITY_STATUS Status { get; set; } = AUTHORITY_STATUS.PENDING;
-        public License? License { get; set; }
+    public enum AUTHORITY_STATE { APPROVED, PENDING, REJECTED }
 
-        public LicenseStruct() { }
-        public LicenseStruct(License? License, AUTHORITY_STATUS Status)
-        {
-            this.License = License;
-            this.Status = Status;
-        }
+    public interface ILicenseAuthority {
+        LicenseAuthority AddRules(IAuthorityRule[] rules);
+        Task<LicenseResult> RunOn(LicenseLookUp license);
     }
 
-    public abstract class LicenseAuthority<T> where T : LicenseAuthority<T>
+    public class LicenseAuthority : ILicenseAuthority
     {
-        public LicenseStruct _license;
+        private ILicenseProcessor Processor;
 
-        public abstract Task<ActionResult<LicenseStruct>> Auto();
+        private List<IAuthorityRule> Rules = new();
+        private LicenseResult Result;
 
-        public T CheckStatus()
+        public LicenseAuthority(ILicenseProcessor processor)
         {
-            if (_license.License != null)
+            this.Processor = processor;
+            this.Result = new LicenseResult();
+        }
+
+        public LicenseAuthority AddRules(IAuthorityRule[] rules)
+        {
+            for (int i = 0; i < rules.Length; i++)
             {
-                if (_license.License.Status != LICENSE_STATUS.ACTIVATED)
-                {
-                    _license.Status = AUTHORITY_STATUS.DENIED;
-                }
+                Rules.Add(rules[i]);
             }
-            return (T)this;
-        }
-
-        [Obsolete("Use .Auto() instead, will not return a License because it was approved Forcefully.")]
-        public async Task<ActionResult<LicenseStruct>> Approve()
-        {
-            return await Task.FromResult(new LicenseStruct(null, AUTHORITY_STATUS.APPROVED));
-        }
-
-        [Obsolete("Use .Auto() instead")]
-        public async Task<ActionResult<LicenseStruct>> Deny()
-        {
-            return await Task.FromResult(new LicenseStruct(null, AUTHORITY_STATUS.DENIED));
-        }
-    }
-
-    public class LicenseAuthorityUtil
-    {
-        public enum AUTHORITY_STATUS
-        {
-            APPROVED,
-            PENDING,
-            DENIED
-        }
-    }
-}
-
-    /// <summary>
-    /// Handles the authorities for anything related to CreateLicense.
-    /// </summary>
-   /* public class CreateLicenseAuthorityBuilder : LicenseAuthority
-    {
-        private LicenseStruct _license = new LicenseStruct();
-
-        public CreateLicenseAuthorityBuilder(License license)
-        {
-            this._license.License = license;
-        }
-
-        //check expiration date, 
-
-        public CreateLicenseAuthorityBuilder CheckFormat()
-        {
             return this;
         }
 
-        public async override Task<ActionResult<LicenseStruct>> Auto()
+        public async Task<LicenseResult> RunOn(LicenseLookUp lookUp)
         {
-            return await Task.FromResult(_license);
+            License? license = Processor.FindLicense(lookUp);
+            if (license == null)
+            {
+                return await Task.FromResult(new LicenseResult(null, AUTHORITY_STATE.REJECTED));
+            }
+
+            for (int i = 0; i < Rules.Count; i++ )
+            {
+                Result = Rules[i].Execute(license);
+                if (Result.AuthorityState == AUTHORITY_STATE.REJECTED)
+                {
+                    // Immediately stop running the rules when a rejection occurs.
+                    break;
+                }
+            }
+            return await Task.FromResult(Result);
         }
-    }*/
-
-
+    }
+}
