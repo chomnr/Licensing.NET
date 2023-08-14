@@ -3,6 +3,10 @@ using static License_Server.Services.Licensing.License;
 
 namespace License_Server.Services.Licensing.Rules
 {
+    /// <summary>
+    /// This rule disallows expired licenses. If a license is expired and the Modify is set to true
+    /// it will update the value inside the database.
+    /// </summary>
     public class NoExpirationRule : IAuthorityRule
     {
         private readonly bool Modify = false;
