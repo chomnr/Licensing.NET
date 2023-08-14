@@ -6,7 +6,7 @@ namespace License_Server.Services.License.Rules
 {
     public class RequireDeactivationRule : IAuthorityRule
     {
-        public LicenseResult Execute(Licensing.License license)
+        public LicenseResult Execute(Licensing.License license, LicenseError error)
         {
             LICENSE_STATUS licenseStatus = license.Status;
             AUTHORITY_STATE state = AUTHORITY_STATE.APPROVED;
@@ -15,7 +15,7 @@ namespace License_Server.Services.License.Rules
             {
                 state = AUTHORITY_STATE.REJECTED;
             }
-            return new LicenseResult(license, state);
+            return new LicenseResult(license, state, error);
         }
     }
 }

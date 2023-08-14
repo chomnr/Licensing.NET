@@ -18,6 +18,7 @@ namespace License_Server.Services.Licensing
     public interface ILicenseAuthority {
         LicenseAuthority AddRules(IAuthorityRule[] rules);
         Task<LicenseResult> RunOn(LicenseLookUp license);
+        public LicenseAuthority SetErrorMessage(string message);
     }
 
     public class LicenseAuthority : ILicenseAuthority
@@ -26,6 +27,8 @@ namespace License_Server.Services.Licensing
 
         private List<IAuthorityRule> Rules = new();
         private LicenseResult Result;
+
+        private LicenseError error = new LicenseError("Something went wrong.");
 
         public LicenseAuthority(ILicenseProcessor processor)
         {
@@ -42,12 +45,18 @@ namespace License_Server.Services.Licensing
             return this;
         }
 
+        public LicenseAuthority SetErrorMessage(string message) 
+        {
+            this.error.message = message;
+            return this; 
+        }
+
         public async Task<LicenseResult> RunOn(LicenseLookUp lookUp)
         {
             License? license = Processor.FindLicense(lookUp);
             if (license == null)
             {
-                return await Task.FromResult(new LicenseResult(null, AUTHORITY_STATE.REJECTED));
+                return await Task.FromResult(new LicenseResult(error, AUTHORITY_STATE.REJECTED));
             }
 
             for (int i = 0; i < Rules.Count; i++ )

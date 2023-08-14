@@ -79,25 +79,11 @@ namespace Licensing_System.Controllers
             //todo: for YOU; get session token(id), then get id of user.
             UserSession session = new UserSession(sessionId);
             LicenseResult result = await _provider.ValidateLicense(session, productId);
-            if (result.License != null)
+            if (result.AuthorityState != AUTHORITY_STATE.APPROVED)
             {
-                if (result.AuthorityState != AUTHORITY_STATE.APPROVED)
-                {
-                    await _context.SaveChangesAsync();
-                    return Ok(Json(new
-                    {
-                        AUTHORITY = result.AuthorityState.ToString(),
-                        message = "Verification was not a success the license has expired or does not exist."
-                    }).Value);
-                };
-            } else
-            {
-                return Ok(Json(new
-                {
-                    AUTHORITY = result.AuthorityState.ToString(),
-                    message = "Verification was not a success the license has expired or does not exist."
-                }).Value);
-            }
+                await _context.SaveChangesAsync();
+                //return Forbid("");
+            };
             return Ok(Json(result.License).Value);
         }
     }

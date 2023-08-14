@@ -66,7 +66,7 @@ namespace Licensing_Server.Services.Licensing
             // Disabled Authority for CreateLicense; until I found what rules I can add
             // and to avoid confliction with Stripe.
             Processor.AddLicense(license);
-            return new LicenseResult(license, AUTHORITY_STATE.APPROVED);
+            return new LicenseResult(license, AUTHORITY_STATE.APPROVED, null);
         }
 
         /// <summary>
@@ -80,6 +80,7 @@ namespace Licensing_Server.Services.Licensing
             LicenseLookUp lookUp = new LicenseLookUp(productId, session.Id, null);
             IAuthorityRule[] rules = { new NoExpirationRule(true), new RequireActivationRule() };
             LicenseResult result = await Authority
+                .SetErrorMessage("Verification failed either the license has expired or is invalid.")
                 .AddRules(rules)
                 .RunOn(lookUp);
             return result;

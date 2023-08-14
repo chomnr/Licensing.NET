@@ -1,4 +1,5 @@
 ﻿
+using License_Server.Services.License;
 using static License_Server.Services.Licensing.License;
 
 namespace License_Server.Services.Licensing.Rules
@@ -17,7 +18,7 @@ namespace License_Server.Services.Licensing.Rules
             this.Modify = Modify;
         }
 
-        public LicenseResult Execute(License license)
+        public LicenseResult Execute(License license, LicenseError error)
         {
             AUTHORITY_STATE state = AUTHORITY_STATE.APPROVED;
 
@@ -34,7 +35,7 @@ namespace License_Server.Services.Licensing.Rules
                     license.Status = LICENSE_STATUS.DEACTIVATED;
                 }
             }
-            return new LicenseResult(license, state);
+            return new LicenseResult(license, state, error);
         }
     }
 }
