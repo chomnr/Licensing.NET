@@ -26,7 +26,7 @@ namespace License_Server.Services.Licensing
     {
         // ACTIVATED = PAYING
         // DEACTIVATED = PAID BUT DID NOT RENEW.
-        // SUSPENDED = LICENSE WAS SUSPENDED BY SOMEONE.
+        // SUSPENDED = LICENSE WAS SUSPENDED BY SOMEONE. 
         public enum LICENSE_STATUS { ACTIVATED, DEACTIVATED, SUSPENDED, UNCLAIMED }
 
         [Key]
