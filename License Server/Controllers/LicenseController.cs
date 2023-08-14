@@ -82,7 +82,7 @@ namespace Licensing_System.Controllers
             if (result.AuthorityState != AUTHORITY_STATE.APPROVED)
             {
                 await _context.SaveChangesAsync();
-                return Ok(Json(result.error).Value);
+                return Ok(Json(result.Error).Value);
             };
             return Ok(Json(result.License).Value);
         }
