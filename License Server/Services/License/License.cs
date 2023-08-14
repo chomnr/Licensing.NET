@@ -1,9 +1,9 @@
 ﻿using License_Server.Services.License.LicenseException;
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
-using static License_Server.Services.LicenseService.License;
+using static License_Server.Services.Licensing.License;
 
-namespace License_Server.Services.LicenseService
+namespace License_Server.Services.Licensing
 {
     public class License
     {

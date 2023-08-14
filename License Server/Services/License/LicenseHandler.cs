@@ -1,7 +1,8 @@
-﻿using License_Server.Services.LicenseService;
+﻿using License_Server.Services.Licensing;
+using License_Server.Services.Licensing.Authorities;
 using License_Server.Services.User;
-using Licensing_System.Services.Licensing;
-using static Licensing_System.Services.Licensing.LicenseAuthorityUtil;
+using System.Diagnostics;
+using static License_Server.Services.Licensing.LicenseAuthorityUtil;
 //client -> mediator(does authenticatin) -> license server. 
 // client -> buys product -> /buy/software1 -> stripe transaction completed med
 //
@@ -12,6 +13,7 @@ namespace Licensing_Server.Services.Licensing
     {
         public delegate Task<LicenseStruct> LicenseCreate(License license);
         public delegate Task<LicenseStruct> LicenseValidate(UserSession session, string productId);
+        public delegate Task<LicenseStruct> LicenseActivate(UserSession session, string key);
     }
 
     public class LicenseHandler
@@ -42,6 +44,12 @@ namespace Licensing_Server.Services.Licensing
         public event LicenseDelegation.LicenseValidate? OnLicenseValidate;
 
         /// <summary>
+        /// Whenever <c>LicenseProvider.ActivateLicense</c> is called LicenseValidateEvent will be called.
+        /// </summary>
+        #pragma warning disable
+        public event LicenseDelegation.LicenseActivate? OnLicenseActivate;
+
+        /// <summary>
         ///  
         /// </summary>
         /// <param name="license"></param>
@@ -64,7 +72,12 @@ namespace Licensing_Server.Services.Licensing
             return new LicenseStruct(license, AUTHORITY_STATUS.APPROVED);
         }
 
-        ///
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="session"></param>
+        /// <param name="productId"></param>
+        /// <returns></returns>
         public async Task<LicenseStruct> ValidateLicenseEvent(UserSession session, string productId)
         {
             ValidateLicenseAuthorityBuilder authorityBuilder = new(Processor, session, productId);
@@ -76,6 +89,23 @@ namespace Licensing_Server.Services.Licensing
             {
                 // If AuthorityStatus is anything but approved that means something is wrong with the license.
                 // expired, the current status etc;
+                Processor.SaveLicense(result.Value.License);
+            }
+            return result.Value;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="session"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public async Task<LicenseStruct> LicenseActivateEvent(UserSession session, string key)
+        {
+            ActivateLicenseAuthorityBuilder authorityBuilder = new(Processor, key);
+            var result = await authorityBuilder.Auto();
+            if (result.Value.Status != AUTHORITY_STATUS.APPROVED)
+            {
                 Processor.SaveLicense(result.Value.License);
             }
             return result.Value;

@@ -1,7 +1,5 @@
-﻿using License_Server.Services.LicenseService;
-using License_Server.Services.User;
+﻿using License_Server.Services.User;
 using Licensing_Server.Services.Licensing;
-using Licensing_System.Services.Licensing;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace License_Server.Services.Licensing
@@ -16,6 +14,7 @@ namespace License_Server.Services.Licensing
         public Task<LicenseStruct> ValidateLicense(UserSession session, string productId);
 
         //ActivateLicense
+        public Task<LicenseStruct> ActivateLicense(UserSession session, string key);
     }
 
     public class LicenseProvider : ILicenseProvider
@@ -26,6 +25,18 @@ namespace License_Server.Services.Licensing
         {
             this.handler = new LicenseHandler(processor);
             //this.processor = processor;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="session"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public async Task<LicenseStruct> ActivateLicense(UserSession session, string key)
+        {
+            handler.OnLicenseActivate += new LicenseDelegation.LicenseActivate(handler.LicenseActivateEvent);
+            return await handler.LicenseActivateEvent(session, key);
         }
 
         /// <summary>

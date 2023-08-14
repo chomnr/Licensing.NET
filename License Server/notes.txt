@@ -1,7 +1,7 @@
 common endpoints that you might consider including in your licensing system:
 
     License Activation:
-        Endpoint: /api/license/activate
+        Endpoint: /api/license/admin/activate
         Purpose: This endpoint is used to activate a new license for the software. It might require parameters such as a license key, user information, and potentially hardware or machine identifiers.
 
     License Deactivation:
@@ -33,4 +33,31 @@ common endpoints that you might consider including in your licensing system:
         /generate
         /verify
 
-Remember that the specific endpoints you choose to implement will depend on your licensing model, the level of control you want over your licenses, and the features you want to offer to your users. Additionally, security is paramount in a licensing system, so make sure to implement proper authentication, authorization, and encryption mechanisms to protect your licensing endpoints.
+Remember that the specific endpoints you choose to implement 
+will depend on your licensing model, the level of control you want over your licenses, and the features you want to offer to your users. Additionally, security is paramount in a licensing system, so make sure to implement proper authentication, authorization, and encryption mechanisms to protect your licensing endpoints.
+
+
+
+
+
+
+
+
+
+public async Task<LicenseStruct> CreateLicenseEvent(License license)
+        {
+            /*
+            CreateLicenseAuthorityBuilder authorityBuilder = new CreateLicenseAuthorityBuilder(license);
+            var result = await authorityBuilder
+                .CheckFormat()
+                .Approve();
+
+            if (result.Value.Status == AUTHORITY_STATUS.APPROVED) {
+                Processor.AddLicense(license);
+            }
+            */
+            // Disabled Authority for CreateLicense; until I found what rules I can add
+            // and to avoid confliction with Stripe.
+            Processor.AddLicense(license);
+            return new LicenseStruct(license, AUTHORITY_STATUS.APPROVED);
+        }

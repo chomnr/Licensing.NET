@@ -1,4 +1,4 @@
-﻿using License_Server.Services.LicenseService;
+﻿using License_Server.Services.Licensing;
 using Microsoft.EntityFrameworkCore;
 
 namespace Licensing_System

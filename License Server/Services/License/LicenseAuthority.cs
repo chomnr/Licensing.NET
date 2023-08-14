@@ -1,15 +1,10 @@
-﻿using License_Server.Services.LicenseService;
-using License_Server.Services.User;
-using Licensing_Server.Services.Licensing;
+﻿using License_Server.Services.Licensing.Authorities;
 using Microsoft.AspNetCore.Mvc;
-using static Licensing_System.Services.Licensing.LicenseAuthorityUtil;
+using static License_Server.Services.Licensing.License;
+using static License_Server.Services.Licensing.LicenseAuthorityUtil;
 
-namespace Licensing_System.Services.Licensing
+namespace License_Server.Services.Licensing
 {
-
-    /// <summary>
-    /// Returns the user License and the AuthorityStatus.
-    /// </summary>
     public struct LicenseStruct
     {
         public AUTHORITY_STATUS Status { get; set; } = AUTHORITY_STATUS.PENDING;
@@ -23,9 +18,23 @@ namespace Licensing_System.Services.Licensing
         }
     }
 
-    public abstract class LicenseAuthority
+    public abstract class LicenseAuthority<T> where T : LicenseAuthority<T>
     {
+        public LicenseStruct _license;
+
         public abstract Task<ActionResult<LicenseStruct>> Auto();
+
+        public T CheckStatus()
+        {
+            if (_license.License != null)
+            {
+                if (_license.License.Status != LICENSE_STATUS.ACTIVATED)
+                {
+                    _license.Status = AUTHORITY_STATUS.DENIED;
+                }
+            }
+            return (T)this;
+        }
 
         [Obsolete("Use .Auto() instead, will not return a License because it was approved Forcefully.")]
         public async Task<ActionResult<LicenseStruct>> Approve()
@@ -39,6 +48,17 @@ namespace Licensing_System.Services.Licensing
             return await Task.FromResult(new LicenseStruct(null, AUTHORITY_STATUS.DENIED));
         }
     }
+
+    public class LicenseAuthorityUtil
+    {
+        public enum AUTHORITY_STATUS
+        {
+            APPROVED,
+            PENDING,
+            DENIED
+        }
+    }
+}
 
     /// <summary>
     /// Handles the authorities for anything related to CreateLicense.
@@ -65,84 +85,4 @@ namespace Licensing_System.Services.Licensing
         }
     }*/
 
-    /// <summary>
-    /// Handles the authorities for anything related to ValidateLicense.
-    /// </summary>
-    public class ValidateLicenseAuthorityBuilder : LicenseAuthority 
-    {
-        private LicenseStruct _license = new LicenseStruct();
-
-        private ILicenseProcessor Processor { get; set; }
-
-        private UserSession Session { get; set; }
-        private string ProductId { get; set; }
-
-        public ValidateLicenseAuthorityBuilder(ILicenseProcessor processor, UserSession session, string productId) {
-            this.Session = session;
-            this.ProductId = productId;
-            this.Processor = processor;
-            try
-            {
-                License? lookForLicense = Processor.FindLicense(session, productId);
-                if (lookForLicense != null)
-                {
-                    _license.License = lookForLicense;
-                }
-            } catch (Exception)
-            {
-                _license.Status = AUTHORITY_STATUS.DENIED;
-            }
-        }
-
-        public ValidateLicenseAuthorityBuilder CheckExpiration()
-        {
-            if ( _license.License != null )
-            {
-                long currentTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                long expiration = _license.License.PurchaseDate + _license.License.Duration;
-
-                if (currentTime > expiration)
-                {
-                    _license.License.Status = License.LICENSE_STATUS.DEACTIVATED;
-                    _license.Status = AUTHORITY_STATUS.DENIED;
-                }
-            }
-            return this;
-        }
-
-        public ValidateLicenseAuthorityBuilder CheckStatus()
-        {
-            if (_license.License != null)
-            {
-                if (_license.License.Status != License.LICENSE_STATUS.ACTIVATED )
-                {
-                    _license.Status = AUTHORITY_STATUS.DENIED;
-                    return this;
-                }
-            }
-            return this;
-        }
-
-        public async override Task<ActionResult<LicenseStruct>> Auto()
-        {
-            // If the AuthorityStatus is still pending at this point
-            // that means all the checks worked.
-            if (_license.Status == AUTHORITY_STATUS.PENDING)
-            {
-                _license.Status = AUTHORITY_STATUS.APPROVED;
-            }
-            return await Task.FromResult(_license);
-        }
-    }
-
-    public class LicenseAuthorityUtil
-    {
-        public enum AUTHORITY_STATUS
-        {
-            APPROVED,
-            PENDING,
-            DENIED
-        }
-    }
-}
 

@@ -1,10 +1,9 @@
 ﻿using License_Server.Services.Licensing;
 using License_Server.Services.User;
 using Licensing_Server.Services.Licensing;
-using Licensing_System.Services.Licensing;
 using Microsoft.AspNetCore.Mvc;
 using Stripe;
-using static Licensing_System.Services.Licensing.LicenseAuthorityUtil;
+using static License_Server.Services.Licensing.LicenseAuthorityUtil;
 using LicenseProvider = License_Server.Services.Licensing.LicenseProvider;
 
 namespace Licensing_System.Controllers
@@ -15,7 +14,7 @@ namespace Licensing_System.Controllers
 
     [Route("api/license")]
     [ApiController]
-    public class LicensesController : Controller
+    public class LicenseController : Controller
     {
         private readonly LicenseDbContext _context;
         private readonly ILicenseProcessor _processor;
@@ -24,7 +23,7 @@ namespace Licensing_System.Controllers
         const string secret = "whsec_13a51b76e3b1cc99eba439d820ca97315ea971f9cc6bc9d3fea3e12ebdcd01e0";
 
 
-        public LicensesController(LicenseDbContext context, ILicenseProcessor processor, ILicenseProvider provider)
+        public LicenseController(LicenseDbContext context, ILicenseProcessor processor, ILicenseProvider provider)
         {
             _context = context;
             _processor = processor;
