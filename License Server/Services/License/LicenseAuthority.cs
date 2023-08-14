@@ -61,7 +61,7 @@ namespace License_Server.Services.Licensing
 
             for (int i = 0; i < Rules.Count; i++ )
             {
-                Result = Rules[i].Execute(license);
+                Result = Rules[i].Execute(license, error);
                 if (Result.AuthorityState == AUTHORITY_STATE.REJECTED)
                 {
                     // Immediately stop running the rules when a rejection occurs.
