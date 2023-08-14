@@ -74,7 +74,7 @@ namespace Licensing_System.Controllers
         }
 
         [HttpGet("verify")]
-        public async Task<IActionResult> GetValidateLicense(string sessionId, string productId)
+        public async Task<IActionResult> GetVerifyLicense(string sessionId, string productId)
         {
             //todo: for YOU; get session token(id), then get id of user.
             UserSession session = new UserSession(sessionId);
@@ -85,6 +85,9 @@ namespace Licensing_System.Controllers
                 {
                     await _context.SaveChangesAsync();
                 }
+            } else
+            {
+                return Ok(Json(result.AuthorityState.ToString()).Value);
             }
             return Ok(Json(result).Value);
         }

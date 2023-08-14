@@ -1,4 +1,5 @@
-﻿using License_Server.Services.Licensing;
+﻿using License_Server.Services.License.Rules;
+using License_Server.Services.Licensing;
 using License_Server.Services.Licensing.Rules;
 using License_Server.Services.User;
 using System.Diagnostics;
@@ -65,8 +66,7 @@ namespace Licensing_Server.Services.Licensing
             // Disabled Authority for CreateLicense; until I found what rules I can add
             // and to avoid confliction with Stripe.
             Processor.AddLicense(license);
-            throw new NotImplementedException();
-            //return new LicenseResult(license, AUTHORITY_STATUS.APPROVED);
+            return new LicenseResult(license, AUTHORITY_STATE.APPROVED);
         }
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace Licensing_Server.Services.Licensing
         public async Task<LicenseResult> ValidateLicenseEvent(UserSession session, string productId)
         {
             LicenseLookUp lookUp = new LicenseLookUp(productId, session.Id, null);
-            IAuthorityRule[] rules = { new NoExpirationRule(true) };
+            IAuthorityRule[] rules = { new NoExpirationRule(true), new RequireActivationRule() };
             LicenseResult result = await Authority
                 .AddRules(rules)
                 .RunOn(lookUp);
