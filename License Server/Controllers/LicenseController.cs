@@ -30,16 +30,6 @@ namespace Licensing_System.Controllers
             _provider = new LicenseProvider(_processor);
         }
 
-        /*
-        [HttpPost("/api/admin/license/activate")]
-        public async Task<IActionResult> PostActivateLicense(string key)
-        {
-            // Handle cookie/ permissions here or mask it around a different endpoint.
-            LicenseStruct result = await _provider.ActivateLicense(key);
-            await _context.SaveChangesAsync();
-            return Ok(result.AuthorityStatus.ToString());
-        }*/
-
         [HttpPost("generate")]
         public async Task<IActionResult> PostGenerateLicense()
         {

@@ -100,7 +100,7 @@ namespace Licensing_Server.Services.Licensing
             LICENSE_STATUS[] statusToLookFor = new LICENSE_STATUS[] { LICENSE_STATUS.SUSPENDED, LICENSE_STATUS.UNCLAIMED };
             IAuthorityRule[] rules = { new RequireStatusRole(statusToLookFor), new RequireOwnershipRule(), new RequireDurationRule() };
             LicenseResult result = await Authority
-                .SetErrorMessage("Activation has failed either because the license does not exist, is deactivated, is currently activated, or the duration is set to 0.")
+                .SetErrorMessage("Activation has failed either because the license does not exist, is deactivated, is currently activated, has no owner, or the duration is set to 0.")
                 .AddRules(rules)
                 .RunOn(lookUp);
 
