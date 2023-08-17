@@ -6,6 +6,8 @@ namespace License_Server.Services.License.Rules
 {
     public class RequireDeactivationRule : IAuthorityRule
     {
+        public string Name { get; set; } = "RequireDeactivationRule";
+
         public LicenseResult Execute(Licensing.License license, LicenseError error)
         {
             LICENSE_STATUS licenseStatus = license.Status;

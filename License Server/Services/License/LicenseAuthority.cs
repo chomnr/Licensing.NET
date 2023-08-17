@@ -47,7 +47,7 @@ namespace License_Server.Services.Licensing
 
         public LicenseAuthority SetErrorMessage(string message) 
         {
-            this.error.message = message;
+            this.error.Message = message;
             return this; 
         }
 
@@ -64,7 +64,9 @@ namespace License_Server.Services.Licensing
                 Result = Rules[i].Execute(license, error);
                 if (Result.AuthorityState == AUTHORITY_STATE.REJECTED)
                 {
-                    // Immediately stop running the rules when a rejection occurs.
+                    // Add the rule to the FailedRules
+                    error.FailedRules.Add(Rules[i].Name);
+                    // then immediately stop running the rules when a rejection occurs.
                     break;
                 }
             }

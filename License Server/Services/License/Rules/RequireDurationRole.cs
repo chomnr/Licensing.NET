@@ -10,6 +10,8 @@ namespace License_Server.Services.Licensing.Rules
     /// </summary>
     public class RequireDurationRule : IAuthorityRule
     {
+        public string Name { get; set; } = "RequireDurationRule";
+
         public LicenseResult Execute(License license, LicenseError error)
         {
             AUTHORITY_STATE state = AUTHORITY_STATE.APPROVED;

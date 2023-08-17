@@ -10,6 +10,8 @@ namespace License_Server.Services.Licensing.Rules
     /// </summary>
     public class RequireExpirationRule : IAuthorityRule
     {
+        public string Name { get; set; } = "RequireDurationRule";
+
         private readonly bool Modify = false;
 
         public RequireExpirationRule() { }

@@ -6,6 +6,8 @@ namespace License_Server.Services.License.Rules
 {
     public class RequireUnclaimedRule : IAuthorityRule
     {
+        public string Name { get; set; } = "RequireUnclaimedRule";
+
         public LicenseResult Execute(Licensing.License license, LicenseError error)
         {
             LICENSE_STATUS licenseStatus = license.Status;

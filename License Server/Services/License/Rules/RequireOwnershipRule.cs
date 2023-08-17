@@ -10,6 +10,8 @@ namespace License_Server.Services.Licensing.Rules
     /// </summary>
     public class RequireOwnershipRule : IAuthorityRule
     {
+        public string Name { get; set; } = "RequireOwnershipRule";
+
         public LicenseResult Execute(License license, LicenseError error)
         {
             AUTHORITY_STATE state = AUTHORITY_STATE.APPROVED;

@@ -11,6 +11,8 @@ namespace License_Server.Services.Licensing.Rules
     /// </summary>
     public class RequireStatusRole : IAuthorityRule
     {
+        public string Name { get; set; } = "RequireOwnershipRule";
+
         private List<LICENSE_STATUS> statues = new List<LICENSE_STATUS>();
 
         public RequireStatusRole(LICENSE_STATUS[] atLeastOne) { 
