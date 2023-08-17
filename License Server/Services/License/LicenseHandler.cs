@@ -80,7 +80,7 @@ namespace Licensing_Server.Services.Licensing
         {
             //todo remove modifers from rules have them manually handled
             LicenseLookUp lookUp = new LicenseLookUp(productId, session.Id, null);
-            IAuthorityRule[] rules = { new NoExpirationRule(true), new RequireActivationRule() };
+            IAuthorityRule[] rules = { new RequireExpirationRule(true), new RequireActivationRule() };
             LicenseResult result = await Authority
                 .SetErrorMessage("Verification failed either the license has expired or is invalid.")
                 .AddRules(rules)

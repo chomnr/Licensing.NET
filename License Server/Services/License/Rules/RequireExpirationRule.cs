@@ -8,12 +8,12 @@ namespace License_Server.Services.Licensing.Rules
     /// This rule disallows expired licenses. If a license is expired and the Modify is set to true
     /// it will update the value inside the database.
     /// </summary>
-    public class NoExpirationRule : IAuthorityRule
+    public class RequireExpirationRule : IAuthorityRule
     {
         private readonly bool Modify = false;
 
-        public NoExpirationRule() { }
-        public NoExpirationRule(bool Modify)
+        public RequireExpirationRule() { }
+        public RequireExpirationRule(bool Modify)
         {
             this.Modify = Modify;
         }
