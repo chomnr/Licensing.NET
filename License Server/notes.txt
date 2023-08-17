@@ -32,6 +32,7 @@ common endpoints that you might consider including in your licensing system:
         FINISHED:
         /generate
         /verify
+        /activate
 
 Remember that the specific endpoints you choose to implement 
 will depend on your licensing model, the level of control you want over your licenses, and the features you want to offer to your users. Additionally, security is paramount in a licensing system, so make sure to implement proper authentication, authorization, and encryption mechanisms to protect your licensing endpoints.

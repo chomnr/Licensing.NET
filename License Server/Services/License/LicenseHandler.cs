@@ -82,7 +82,7 @@ namespace Licensing_Server.Services.Licensing
             LicenseLookUp lookUp = new LicenseLookUp(productId, session.Id, null);
             IAuthorityRule[] rules = { new RequireExpirationRule(true), new RequireActivationRule() };
             LicenseResult result = await Authority
-                .SetErrorMessage("Verification failed either the license has expired or is invalid.")
+                .SetErrorMessage("Verification has failed either the license has expired or is invalid.")
                 .AddRules(rules)
                 .RunOn(lookUp);
             return result;
