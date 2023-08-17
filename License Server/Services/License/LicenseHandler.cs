@@ -104,7 +104,6 @@ namespace Licensing_Server.Services.Licensing
                 .AddRules(rules)
                 .RunOn(lookUp);
 
-
             if ( result.AuthorityState == AUTHORITY_STATE.APPROVED)
             {
                 var status = result.License.Status;
