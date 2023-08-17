@@ -26,10 +26,16 @@ namespace License_Server.Controllers
         public async Task<IActionResult> PostActivateLicense(string key)
         {
             // Handle cookie/ permissions here or mask it around a different endpoint.
-           // LicenseStruct result = await _provider.ActivateLicense(key);
-           // await _context.SaveChangesAsync();
-           throw new NotImplementedException();
-            //return Ok(result.AuthorityStatus.ToString());
+            // LicenseStruct result = await _provider.ActivateLicense(key);
+            LicenseResult result = await _provider.ActivateLicense(key);
+            if (result.AuthorityState != AUTHORITY_STATE.APPROVED)
+            {
+                return Ok(Json(result.Error).Value);
+            } else
+            {
+                await _context.SaveChangesAsync();
+            }
+            return Ok(Json(result.License).Value);
         }
     }
 }
