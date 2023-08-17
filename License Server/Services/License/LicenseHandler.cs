@@ -78,6 +78,7 @@ namespace Licensing_Server.Services.Licensing
         /// <returns></returns>
         public async Task<LicenseResult> ValidateLicenseEvent(UserSession session, string productId)
         {
+            //todo remove modifers from rules have them manually handled
             LicenseLookUp lookUp = new LicenseLookUp(productId, session.Id, null);
             IAuthorityRule[] rules = { new NoExpirationRule(true), new RequireActivationRule() };
             LicenseResult result = await Authority
@@ -103,7 +104,21 @@ namespace Licensing_Server.Services.Licensing
                 .AddRules(rules)
                 .RunOn(lookUp);
 
-            /*
+            if ( result.AuthorityState == AUTHORITY_STATE.APPROVED)
+            {
+                var status = result.License.Status;
+                result.License.Status = LICENSE_STATUS.ACTIVATED;
+                if (status == LICENSE_STATUS.SUSPENDED)
+                {
+                    result.License.PurchaseDate = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                }
+            }
+            return result;
+        }
+    }
+}
+
+/*
             ActivateLicenseAuthorityBuilder authorityBuilder = new(Processor, key);
             var result = await authorityBuilder
                 .CheckStatus()
@@ -116,12 +131,7 @@ namespace Licensing_Server.Services.Licensing
                 Processor.UpdateLicense(result.Value.License);
             }
             */
-            //return result.Value;
-            return result;
-        }
-    }
-}
-
+//return result.Value;
 
 //LicenseAuthority licenseAuthority = new LicenseAuthority()
 // licenseAuthority.AddRules(license, [NO_EXPIRY, CHECK_FOR_ACTIVATION]);
