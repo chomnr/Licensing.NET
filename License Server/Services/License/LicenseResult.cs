@@ -22,7 +22,7 @@ namespace License_Server.Services.Licensing
             this.AuthorityState = state;
             if (state == AUTHORITY_STATE.REJECTED)
             {
-                error.state = state.ToString();
+                error.State = state.ToString();
             }
         }
     }
