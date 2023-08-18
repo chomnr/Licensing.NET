@@ -107,11 +107,11 @@ namespace Licensing_Server.Services.Licensing
             if ( result.AuthorityState == AUTHORITY_STATE.APPROVED)
             {
                 var status = result.License.Status;
-                result.License.Status = LICENSE_STATUS.ACTIVATED;
                 if (status == LICENSE_STATUS.SUSPENDED)
                 {
                     result.License.PurchaseDate = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                 }
+                result.License.Status = LICENSE_STATUS.ACTIVATED;
             }
             return result;
         }
