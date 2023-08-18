@@ -56,6 +56,7 @@ namespace License_Server.Services.Licensing
             License? license = Processor.FindLicense(lookUp);
             if (license == null)
             {
+                error.FailedRules.Add("LicenseNonExistent");
                 return await Task.FromResult(new LicenseResult(error, AUTHORITY_STATE.REJECTED));
             }
 
