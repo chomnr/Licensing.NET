@@ -2,8 +2,6 @@
 using License_Server.Services.Licensing;
 using License_Server.Services.Licensing.Rules;
 using License_Server.Services.User;
-using Stripe;
-using System.Diagnostics;
 using static License_Server.Services.Licensing.License;
 //client -> mediator(does authenticatin) -> license server. 
 // client -> buys product -> /buy/software1 -> stripe transaction completed med

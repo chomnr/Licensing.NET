@@ -20,26 +20,11 @@ namespace License_Server.Services.Licensing
     public class LicenseProvider : ILicenseProvider
     {
         private readonly LicenseHandler Handler;
-
-        private LicenseAuthority Authority;
         
         public LicenseProvider(ILicenseProcessor processor)
         {
             this.Handler = new LicenseHandler(processor);
-            this.Authority = new LicenseAuthority(processor);
             //this.processor = processor;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="session"></param>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public async Task<LicenseResult> ActivateLicense(string key)
-        {
-            Handler.OnLicenseActivate += new LicenseDelegation.LicenseActivate(Handler.LicenseActivateEvent);
-            return await Handler.LicenseActivateEvent(key);
         }
 
         /// <summary>
@@ -87,6 +72,18 @@ namespace License_Server.Services.Licensing
 
             Handler.OnLicenseValidate += new LicenseDelegation.LicenseValidate(Handler.ValidateLicenseEvent);
             return await Handler.ValidateLicenseEvent(session, productId);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="session"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public async Task<LicenseResult> ActivateLicense(string key)
+        {
+            Handler.OnLicenseActivate += new LicenseDelegation.LicenseActivate(Handler.LicenseActivateEvent);
+            return await Handler.LicenseActivateEvent(key);
         }
     }
 }
